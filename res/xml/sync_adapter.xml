@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider"
+    android:accountType="fi.aalto.t110_5140.group07_2014.noppacalendarsync.no_account"
+    android:allowParallelSyncs="false"
+    android:isAlwaysSyncable="false"
+    android:supportsUploading="false" />

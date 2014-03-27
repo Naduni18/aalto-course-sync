@@ -6,12 +6,35 @@
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <provider
+        	android:name="com.example.android.datasync.provider.NoppaContentProvider"
+        	android:authorities="fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider"
+        	android:exported="false"
+        	android:syncable="true" />
+
+        <service android:name="fi.aalto.t110_5140.group07_2014.NoppaSyncService" android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_adapter"/>
+        </service>
+
+        <service android:name="fi.aalto.t110_5140.group07_2014.StubAuthenticatorService" android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator" android:resource="@xml/authenticator"/>
+        </service>
+        
     </application>
 
 </manifest>

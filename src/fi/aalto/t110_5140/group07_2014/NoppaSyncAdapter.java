@@ -34,7 +34,8 @@ import android.util.Xml;
 public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	ContentResolver contentResolver;
-	String apiKey = "<removed>";		// Testi avain
+	private static String apiServer = "noppa-api-dev.aalto.fi";
+	private static String apiKey = "<removed>";		// Testi avain
 
 	public NoppaSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
@@ -71,6 +72,21 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				"T-75.4400",
 				"T-110.5140"
 		};
+    	boolean show_event_course = false;
+    	boolean show_exams = true;
+    	boolean show_mid_term_exams = true;
+    	boolean show_other = true;
+    	boolean show_seminar = true;
+    	boolean show_casework = true;
+    	boolean show_demonstration = true;
+    	boolean show_group_studies = true;
+    	boolean show_individual_studies = true;
+    	boolean show_hybrid_studies = true;
+    	boolean show_online_studies = true;
+    	boolean show_unknown = false;
+    	
+    	String calendarName = "coursecalendar";
+    	String calendarDisplayName = "Course calendar";
 		
 		/*
 		 * Create calendar
@@ -83,7 +99,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				Calendars.CONTENT_URI,
 				new String[]{ Calendars._ID },
 				Calendars.NAME + "=?",
-				new String[]{ "testikalenteri" },
+				new String[]{ calendarName },
 				null);
 		// uncomment to delete events:
 //		while (c.moveToNext()) {
@@ -106,8 +122,8 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			ContentValues val = new ContentValues();
 			val.put(Calendars.ACCOUNT_NAME, account.name);
 			val.put(Calendars.ACCOUNT_TYPE, account.type);
-			val.put(Calendars.NAME, "testikalenteri");
-			val.put(Calendars.CALENDAR_DISPLAY_NAME, "Testikalenteri");
+			val.put(Calendars.NAME, calendarName);
+			val.put(Calendars.CALENDAR_DISPLAY_NAME, calendarDisplayName);
 			val.put(Calendars.CALENDAR_COLOR, 0x777777);
 			val.put(Calendars.CALENDAR_ACCESS_LEVEL, Calendars.CAL_ACCESS_READ);
 			val.put(Calendars.OWNER_ACCOUNT, account.name);
@@ -134,80 +150,92 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		
 		for (String course : courses) {
 
+			/*
+			 * API request
+			 */
 			URL url = null;
 			InputStream in = null;
-			String title = "", type = "", description = "", location = "", start_time = "", end_time = "", start_date = "", end_date = "";
-			
 			try {
-				url = new URL("http://noppa-api-dev.aalto.fi/api/v1/courses/" + course + "/events.xml?key=" + apiKey);
-				// url = new URL("http://noppa-api-dev.aalto.fi/api/v1/courses/T-75.4400/events.xml?key=<removed>");
+				url = new URL("http://" + apiServer + "/api/v1/courses/" + course + "/events.xml?key=" + apiKey);
 			} catch (MalformedURLException e) {
-				Log.d("NoppaSyncAdapter", "MalformedURLException");
+				Log.d("NoppaSyncAdapter", "MalformedURLException " + e.getMessage());
 			}
 	
 			HttpURLConnection urlConnection = null;
 			try {
-				Log.d("NoppaSyncAdapter", "HTTP Get API request, url: " + url.toString());
+				// Log.d("NoppaSyncAdapter", "HTTP Get API request, url: " + url.toString());
 				urlConnection = (HttpURLConnection) url.openConnection();
 				in = new BufferedInputStream(urlConnection.getInputStream());
 				
 			} catch (IOException e) {
-				Log.d("NoppaSyncAdapter", "IOException in url.openConnection or .getInputStream");
-			} finally {
-				urlConnection.disconnect();
+				Log.d("NoppaSyncAdapter", "IOException " + e.getMessage());
 			}
 			
+			/*
+			 * Parse the XML responce.
+			 */
+			String title = "", type = "", description = "", location = "", start_time = "", end_time = "", start_date = "", end_date = "";
 			try {
 				XmlPullParser parser = Xml.newPullParser();
 				parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 				parser.setInput(in, null);
 				parser.nextTag();
-				Log.d("NoppaSyncAdapter", parser.getName());
+				// Log.d("NoppaSyncAdapter", parser.getName());
 				
 				parser.require(XmlPullParser.START_TAG, null, "events");
 				while (parser.next() != XmlPullParser.END_DOCUMENT) {
+					if (parser.getEventType() == XmlPullParser.START_TAG && parser.getEventType() == XmlPullParser.END_TAG) {
+						continue;
+					}
 					if (parser.getEventType() != XmlPullParser.START_TAG) {
 						continue;
 					}
 					String name = parser.getName();
-					Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
+					// Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
 	
 	
 					if (name.equals("title")) {
-						parser.require(XmlPullParser.START_TAG, null, "title");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					        title = android.text.Html.fromHtml(parser.getText()).toString();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "title");
+						title = extractXMLtagContent(parser, "title");
 					}
 					if (name.equals("type")) {
 						parser.require(XmlPullParser.START_TAG, null, "type");
 					    if (parser.next() == XmlPullParser.TEXT) {
-					    	Log.d("NoppaSyncAdapter", parser.getText());
+					    	// Log.d("NoppaSyncAdapter", parser.getText());
 					    	if ( parser.getText().equals("event_course") ) {
+					    		if ( !show_event_course ) { break; }
 					    		type = "??";
 					    	} else if ( parser.getText().equals("exams") ) {
+					    		if ( !show_exams ) { break; }
 					    		type = "Exam";
 					    	} else if ( parser.getText().equals("mid_term_exams") ) {
+					    		if ( !show_mid_term_exams ) { break; }
 					    		type = "Mid term exam";
 					    	} else if ( parser.getText().equals("other") ) {
+					    		if ( !show_other ) { break; }
 					    		type = "Other event";
 					    	} else if ( parser.getText().equals("seminar") ) {
+					    		if ( !show_seminar ) { break; }
 					    		type = "Seminar";
 					    	} else if ( parser.getText().equals("casework") ) {
+					    		if ( !show_casework ) { break; }
 					    		type = "Case work";
 					    	} else if ( parser.getText().equals("demonstration") ) {
+					    		if ( !show_demonstration ) { break; }
 					    		type = "Demonstration";
 					    	} else if ( parser.getText().equals("group_studies") ) {
+					    		if ( !show_group_studies ) { break; }
 					    		type = "Group study";
 					    	} else if ( parser.getText().equals("individual_studies") ) {
+					    		if ( !show_individual_studies ) { break; }
 					    		type = "Individual study";
 					    	} else if ( parser.getText().equals("hybrid_studies") ) {
+					    		if ( !show_hybrid_studies ) { break; }
 					    		type = "Hybrid study";
 					    	} else if ( parser.getText().equals("online_studies") ) {
+					    		if ( !show_online_studies ) { break; }
 					    		type = "Online study";
 					    	} else {
+					    		if ( !show_unknown ) { break; }
 					    		type = "???";
 					    	}
 					        parser.nextTag();
@@ -215,97 +243,75 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 						parser.require(XmlPullParser.END_TAG, null, "type");
 					}
 					if (name.equals("location")) {
-						parser.require(XmlPullParser.START_TAG, null, "location");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	location = android.text.Html.fromHtml(parser.getText()).toString();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "location");
+				    	location = extractXMLtagContent(parser, "location");
 					}
 					if (name.equals("description")) {
-						parser.require(XmlPullParser.START_TAG, null, "description");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	description = android.text.Html.fromHtml(parser.getText()).toString();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "description");
+				    	description = extractXMLtagContent(parser, "description");
 					}
 					if (name.equals("start_date")) {
-						parser.require(XmlPullParser.START_TAG, null, "start_date");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	start_date = parser.getText();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "start_date");
+				    	start_date = extractXMLtagContent(parser, "start_date");
 					}
 					if (name.equals("end_date")) {
-						parser.require(XmlPullParser.START_TAG, null, "end_date");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	end_date = parser.getText();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "end_date");
+				    	end_date = extractXMLtagContent(parser, "end_date");
 					}
 					if (name.equals("start_time")) {
-						parser.require(XmlPullParser.START_TAG, null, "start_time");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	start_time = parser.getText();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "start_time");
+				    	start_time = extractXMLtagContent(parser, "start_time");
 					}
 					if (name.equals("end_time")) {
-						parser.require(XmlPullParser.START_TAG, null, "end_time");
-					    if (parser.next() == XmlPullParser.TEXT) {
-					    	end_time = parser.getText();
-					        parser.nextTag();
-					    }
-						parser.require(XmlPullParser.END_TAG, null, "end_time");
+				    	end_time = extractXMLtagContent(parser, "end_time");
 					}
 				}
 	    
 			} catch (XmlPullParserException e) {
+				Log.d("NoppaSyncAdapter", "XMLParserError " + e.getMessage());
 			} catch (IOException e) {
+				Log.d("NoppaSyncAdapter", "IOException  " + e.getMessage());
 			} finally {
 				try {
 					in.close();
+					urlConnection.disconnect();
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.d("NoppaSyncAdapter", "IOException  " + e.getMessage());
 				}
 			}
 	
 	
-			// add a new event
+			/*
+			 * Add a event to calendar
+			 */
 			ContentValues val = new ContentValues();
 			long start = 0, end = 0;
 			try {
 	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	            Log.i("NoppaSyncAdapter", "Date: " + start_date + " " + start_time);
 	            start = df.parse(start_date + " " + start_time).getTime();
 	            end = df.parse(end_date + " " + end_time).getTime();
+	            
+				val.put(Events.TITLE, title + " - " + type);
+				val.put(Events.DTSTART, start);
+				val.put(Events.DTEND, end);
+				val.put(Events.DESCRIPTION, description);
+				val.put(Events.EVENT_LOCATION, location);
+				val.put(Events.EVENT_TIMEZONE, Time.getCurrentTimezone());
+				val.put(Events.CALENDAR_ID, calendarId);
+				contentResolver.insert(
+						NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
+						val);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				Log.d("NoppaSyncAdapter", "ParseException " + e.getMessage());
+				Log.d("NoppaSyncAdapter", title + " " + location + " " + description + " " + start_date + " " + start_time + " " + end_date + " " + end_time);
 			}
 					
-			val.put(Events.TITLE, title + " - " + type);
-			val.put(Events.DTSTART, start);
-			val.put(Events.DTEND, end);
-			val.put(Events.DESCRIPTION, description);
-			val.put(Events.EVENT_LOCATION, location);
-			val.put(Events.EVENT_TIMEZONE, Time.getCurrentTimezone());
-			val.put(Events.CALENDAR_ID, calendarId);
-			contentResolver.insert(
-					NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
-					val);
-			
-			// uncomment to delete calendars created by this program:
-	//		Log.i("NoppaSyncAdapter",
-	//				"" +
-	//				contentResolver.delete(
-	//						Calendars.CONTENT_URI,
-	//						Calendars.NAME + "=?", new String[]{ "testikalenteri" }) +
-	//				" calendars deleted");
+
 		}
+		
+			// uncomment to delete calendars created by this program:
+/*			Log.i("NoppaSyncAdapter",
+					"" +
+					contentResolver.delete(
+							Calendars.CONTENT_URI,
+							Calendars.NAME + "=?", new String[]{ calendarName }) +
+					" calendars deleted");
+*/	
 	}
 	
 	private static Uri asSyncAdapter(Uri uri, Account account) {
@@ -316,4 +322,14 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				.build();
 	}
 
+	private String extractXMLtagContent(XmlPullParser parser, String requiredTag) throws XmlPullParserException, IOException {
+		String content = "";
+		parser.require(XmlPullParser.START_TAG, null, requiredTag);
+	    if (parser.next() == XmlPullParser.TEXT) {
+	    	content = android.text.Html.fromHtml(parser.getText()).toString();
+	        parser.nextTag();
+	    }
+		parser.require(XmlPullParser.END_TAG, null, requiredTag);
+		return content;
+	}
 }

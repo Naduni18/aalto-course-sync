@@ -19,24 +19,49 @@
         android:theme="@style/AppTheme" >
 
         <provider
-        	android:name="fi.aalto.t110_5140.group07_2014.NoppaContentProvider"
-        	android:authorities="fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider"
-        	android:exported="true"
-        	android:syncable="true" />
+            android:name="fi.aalto.t110_5140.group07_2014.NoppaContentProvider"
+            android:authorities="fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider"
+            android:exported="true"
+            android:syncable="true" />
 
-        <service android:name="fi.aalto.t110_5140.group07_2014.NoppaSyncService" android:exported="true">
+        <service
+            android:name="fi.aalto.t110_5140.group07_2014.NoppaSyncService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
             <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_adapter"/>
         </service>
 
-        <service android:name="fi.aalto.t110_5140.group07_2014.StubAuthenticatorService" android:exported="true">
+        <service
+            android:name="fi.aalto.t110_5140.group07_2014.StubAuthenticatorService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator" android:resource="@xml/authenticator"/>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
         </service>
+
+<!--         <activity android:name="fi.aalto.t110_5140.group07_2014.SettingsActivity"> -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="fi.aalto.t110_5140.group07_2014.action.ACCOUNT_SETUP"/> -->
+<!--                 <category android:name="android.intent.category.DEFAULT"/> -->
+<!--             </intent-filter> -->
+<!--         </activity> -->
+<!--         <activity android:name="fi.aalto.t110_5140.group07_2014.SettingsActivity"> -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.intent.action.MAIN"/> -->
+<!--                 <category android:name="android.intent.category.DEFAULT"/> -->
+<!--             </intent-filter> -->
+<!--         </activity> -->
+        <activity android:name="fi.aalto.t110_5140.group07_2014.PreferencesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         
     </application>
 

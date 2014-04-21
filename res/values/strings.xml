@@ -1,5 +1,14 @@
 <resources>
 
     <string name="app_name">Noppa Calendar Sync</string>
-
+    <string name="course_code">Course code</string>
+    <string name="event_types">Events to include</string>
+    <string name="include_lectures">Lectures</string>
+    <string name="include_exercises">Exercises</string>
+    <string name="include_assignments">Assignments</string>
+    <string name="include_other">Other events</string>
+    <string name="search_hint">Enter search term</string>
+    <string name="search">Search</string>
+    <string name="add_courses">Add courses</string>
+    
 </resources>

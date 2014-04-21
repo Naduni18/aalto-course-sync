@@ -34,8 +34,8 @@ import android.util.Xml;
 public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	ContentResolver contentResolver;
-	private static String apiServer = "noppa-api-dev.aalto.fi";
-	private static String apiKey = "<removed>";		// Testi avain
+	static String apiServer = "noppa-api-dev.aalto.fi";
+	static String apiKey = "<removed>";		// Testi avain
 
 	public NoppaSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
@@ -322,7 +322,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				.build();
 	}
 
-	private String extractXMLtagContent(XmlPullParser parser, String requiredTag) throws XmlPullParserException, IOException {
+	static String extractXMLtagContent(XmlPullParser parser, String requiredTag) throws XmlPullParserException, IOException {
 		String content = "";
 		parser.require(XmlPullParser.START_TAG, null, requiredTag);
 	    if (parser.next() == XmlPullParser.TEXT) {

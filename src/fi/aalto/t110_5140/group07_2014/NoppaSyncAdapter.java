@@ -9,6 +9,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -20,10 +22,12 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
@@ -62,16 +66,17 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		
 		Log.d("NoppaSyncAdapter", "onPerformSync(...)");
 		
-		String[] courses = new String[] {
-				"T-86.5310",
-				"T-61.5010",
-				"T-106.5150",
-				"T-111.5360",
-				"T-110.6220",
-				"T-75.4300",
-				"T-75.4400",
-				"T-110.5140"
-		};
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+		
+		Set<String> courses = pref.getStringSet("courses", new HashSet<String>());
+		
+		// TODO: nämä asetukset käyttöön
+		boolean show_lectures    = pref.getBoolean("include_lectures", true);
+		boolean show_exercises   = pref.getBoolean("include_exercises", true);
+		boolean show_assignments = pref.getBoolean("include_assignments", true);
+		// boolean show_other       = pref.getBoolean("include_other", true);
+		
+		// TODO: nämä konffattaviksi myös?
     	boolean show_event_course = false;
     	boolean show_exams = true;
     	boolean show_mid_term_exams = true;
@@ -296,6 +301,8 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				contentResolver.insert(
 						NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
 						val);
+				
+				// Log.d("NoppaSyncAdapter", "event: " + val.toString());
 			} catch (ParseException e) {
 				Log.d("NoppaSyncAdapter", "ParseException " + e.getMessage());
 				Log.d("NoppaSyncAdapter", title + " " + location + " " + description + " " + start_date + " " + start_time + " " + end_date + " " + end_time);

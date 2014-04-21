@@ -5,12 +5,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <CheckBox
+        android:id="@+id/lecturesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_lectures" />
+
+    <CheckBox
+        android:id="@+id/exercisesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_exercises" />
+
+        <CheckBox
+        android:id="@+id/assignmentsCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_assignments" />
+
+        <CheckBox
+        android:id="@+id/otherCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_other" />
+
     <Button
         android:id="@+id/addCoursesButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="addCourse"
-        android:text="Button" />
+        android:onClick="addCourses"
+        android:text="@string/add_courses" />
 
     <Button
         android:id="@+id/removeCoursesButton"
@@ -18,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="removeCourses"
-        android:text="Button" />
+        android:text="@string/rem_sel_courses" />
 
     <ScrollView
         android:id="@+id/courseListScrollView"

@@ -44,18 +44,6 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-<!--         <activity android:name="fi.aalto.t110_5140.group07_2014.SettingsActivity"> -->
-<!--             <intent-filter> -->
-<!--                 <action android:name="fi.aalto.t110_5140.group07_2014.action.ACCOUNT_SETUP"/> -->
-<!--                 <category android:name="android.intent.category.DEFAULT"/> -->
-<!--             </intent-filter> -->
-<!--         </activity> -->
-<!--         <activity android:name="fi.aalto.t110_5140.group07_2014.SettingsActivity"> -->
-<!--             <intent-filter> -->
-<!--                 <action android:name="android.intent.action.MAIN"/> -->
-<!--                 <category android:name="android.intent.category.DEFAULT"/> -->
-<!--             </intent-filter> -->
-<!--         </activity> -->
         <activity android:name="fi.aalto.t110_5140.group07_2014.PreferencesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

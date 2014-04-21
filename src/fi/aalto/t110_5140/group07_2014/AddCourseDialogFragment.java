@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -16,14 +18,20 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -33,6 +41,7 @@ public class AddCourseDialogFragment extends DialogFragment {
 	private static class Course {
 		public String id;
 		public String name;
+		public boolean checked = false;
 		
 		public Course(String id, String name) {
 			this.id = id;
@@ -145,6 +154,16 @@ public class AddCourseDialogFragment extends DialogFragment {
 	private ArrayList<Course> courses;
 	ArrayAdapter<Course> adapter;
 	
+	private OnItemClickListener courseClickedHandler = new OnItemClickListener() {
+	    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	        Course course = (Course) parent.getItemAtPosition(position);
+	        Log.d("AddCourseDialogFragment", "click: " + course.id + " " + v.getClass());
+	        CheckedTextView ctv = (CheckedTextView) v;
+	        ctv.toggle();
+	        course.checked = ctv.isChecked();
+	    }
+	};
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -164,18 +183,37 @@ public class AddCourseDialogFragment extends DialogFragment {
 					}
 				});
 		
-		adapter = new ArrayAdapter<Course>(
+		adapter = new ArrayAdapter<AddCourseDialogFragment.Course>(
 				view.getContext(),
 				android.R.layout.simple_list_item_multiple_choice,
 				courses );
 		courseListView.setAdapter(adapter);
+		courseListView.setOnItemClickListener(courseClickedHandler);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.add_courses);
 		builder.setView(view);
 		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				// update preferences
+				SharedPreferences pref =
+						PreferenceManager.getDefaultSharedPreferences(getActivity());
+				// make a copy of the set, because original set should not be modified
+				Set<String> courseSet = new HashSet<String>(
+						pref.getStringSet("courses", new HashSet<String>()) );
 				
+				for (Course course : courses) {
+					if (course.checked) {
+						courseSet.add(course.id);
+						Log.d("AddCourseDialogFragment", "selected: " + course.id);
+					}
+				}
+				
+				Editor editor = pref.edit();
+				editor.putStringSet("courses", courseSet);
+				editor.commit();
+				
+				((PreferencesActivity) getActivity()).updateCourseList();
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

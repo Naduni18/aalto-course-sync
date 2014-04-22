@@ -286,9 +286,9 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					if (typeStr != null)
 						type = typeStr;
 					
-					if (parser.getName().equals(eventTag) &&
-							title != null && type != null
-							&& start_date != null && end_date != null ) {
+					if (parser.getName().equals(eventTag) && type != null
+							&& start_date != null && end_date != null
+							&& start_time != null && end_time != null) {
 						
 						ContentValues val = new ContentValues();
 						long start = 0, end = 0;

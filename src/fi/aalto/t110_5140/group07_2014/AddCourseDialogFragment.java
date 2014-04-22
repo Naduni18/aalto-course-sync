@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ import android.widget.ProgressBar;
 
 public class AddCourseDialogFragment extends DialogFragment {
 
-	private static class Course {
+	private static class Course implements Comparable<Course> {
 		public String id;
 		public String name;
 		public boolean checked = false;
@@ -50,6 +51,17 @@ public class AddCourseDialogFragment extends DialogFragment {
 		
 		public String toString() {
 			return id + " - " + name;
+		}
+		
+		public boolean equals(Course other) {
+			return id.equalsIgnoreCase(other.id) && name.equals(other.name);
+		}
+		
+		public int compareTo(Course other) {
+			int diff = id.compareToIgnoreCase(other.id);
+			if (diff == 0)
+				diff = name.compareTo(other.name);
+			return diff;
 		}
 	}
 	
@@ -99,27 +111,25 @@ public class AddCourseDialogFragment extends DialogFragment {
 				
 				parser.require(XmlPullParser.START_TAG, null, "courses");
 				while (parser.next() != XmlPullParser.END_DOCUMENT) {
-					if (parser.getEventType() == XmlPullParser.START_TAG && parser.getEventType() == XmlPullParser.END_TAG) {
-						continue;
-					}
-					if (parser.getEventType() != XmlPullParser.START_TAG) {
-						continue;
-					}
+					int eventType = parser.getEventType();
 					String name = parser.getName();
 					// Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
 	
-					if (name.equals("course")) {
-						course_id = null;
-						course_name = null;
+					if (eventType == XmlPullParser.START_TAG) {
+						if (name.equals("course")) {
+							course_id = null;
+							course_name = null;
+						}
+						else if (name.equals("course_id")) {
+							course_id = NoppaSyncAdapter.extractXMLtagContent(parser, "course_id");
+						}
+						else if (name.equals("name")) {
+							course_name = NoppaSyncAdapter.extractXMLtagContent(parser, "name");
+						}
 					}
-					else if (name.equals("course_id")) {
-						course_id = NoppaSyncAdapter.extractXMLtagContent(parser, "course_id");
-					}
-					else if (name.equals("name")) {
-						course_name = NoppaSyncAdapter.extractXMLtagContent(parser, "name");
-					}
-					
-					if (course_id != null && course_name != null) {
+					else if (eventType == XmlPullParser.END_TAG &&
+							name.equals("course") &&
+							course_id != null && course_name != null) {
 						courses.add(new Course(course_id, course_name));
 					}
 				}
@@ -136,6 +146,8 @@ public class AddCourseDialogFragment extends DialogFragment {
 					Log.d("AddCourseDialogFragment", "IOException  " + e.getMessage());
 				}
 			}
+			
+			Collections.sort(courses);
 			
 			progressBar.post(new Runnable() {
 				@Override

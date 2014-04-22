@@ -63,12 +63,14 @@ public class PreferencesActivity extends Activity {
 		updateCourseList();
 	}
 
+	/** Called on add courses button click */
 	public void addCourses(View view) {
 		new AddCourseDialogFragment().show(
 				getFragmentManager(),
 				"addCourseDialogFragment" );
 	}
 
+	/** Called on remove courses button click */
 	public void removeCourses(View view) {
 		LinearLayout courseListLayout = (LinearLayout) findViewById(R.id.courseList);
 		

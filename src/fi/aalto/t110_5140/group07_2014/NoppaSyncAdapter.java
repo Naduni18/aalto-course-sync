@@ -247,6 +247,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					"/" + objName + ".xml?key=" + apiKey);
 		} catch (MalformedURLException e) {
 			Log.d("NoppaSyncAdapter", "MalformedURLException " + e.getMessage());
+			return;
 		}
 
 		HttpURLConnection urlConnection = null;
@@ -257,6 +258,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			
 		} catch (IOException e) {
 			Log.d("NoppaSyncAdapter", "IOException " + e.getMessage());
+			return;
 		}
 		
 		/*

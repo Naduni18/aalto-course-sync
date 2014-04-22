@@ -77,93 +77,92 @@ public class AddCourseDialogFragment extends DialogFragment {
 		
 		@Override
 		public void run() {
-			progressBar.post(new Runnable() {
-				@Override
-				public void run() {
-					progressBar.setVisibility(View.VISIBLE);
-				}
-			});
 			
 			String searchStr = searchField.getText().toString();
 			
 			/*
 			 * API request
 			 */
-			URL url = null;
 			try {
-				url = new URL("http://" + NoppaSyncAdapter.apiServer +
-						"/api/v1/courses.xml?key=" + NoppaSyncAdapter.apiKey +
-						"&search=" + Uri.encode(searchStr));
-			} catch (MalformedURLException e) {
-				Log.d("AddCourseDialogFragment", "MalformedURLException " + e.getMessage());
-			}
-			
-			InputStream in = null;
-			HttpURLConnection urlConnection = null;
-			try {
-				urlConnection = (HttpURLConnection) url.openConnection();
-				in = new BufferedInputStream(urlConnection.getInputStream());
-			} catch (IOException e) {
-				Log.d("AddCourseDialogFragment", "IOException " + e.getMessage());
-			}
-			
-			/*
-			 * Parse the XML response.
-			 */
-			String course_id = null, course_name = null;
-			try {
-				XmlPullParser parser = Xml.newPullParser();
-				parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-				parser.setInput(in, null);
-				parser.nextTag();
-				
-				parser.require(XmlPullParser.START_TAG, null, "courses");
-				while (parser.next() != XmlPullParser.END_DOCUMENT) {
-					int eventType = parser.getEventType();
-					String name = parser.getName();
-	
-					if (eventType == XmlPullParser.START_TAG) {
-						if (name.equals("course")) {
-							course_id = null;
-							course_name = null;
-						}
-						else if (name.equals("course_id")) {
-							course_id = NoppaSyncAdapter.extractXMLtagContent(parser, "course_id");
-						}
-						else if (name.equals("name")) {
-							course_name = NoppaSyncAdapter.extractXMLtagContent(parser, "name");
-						}
-					}
-					else if (eventType == XmlPullParser.END_TAG &&
-							name.equals("course") &&
-							course_id != null && course_name != null) {
-						courses.add(new Course(course_id, course_name));
-					}
-				}
-	    
-			} catch (XmlPullParserException e) {
-				Log.d("AddCourseDialogFragment", "XMLParserError " + e.getMessage());
-			} catch (IOException e) {
-				Log.d("AddCourseDialogFragment", "IOException  " + e.getMessage());
-			} finally {
+				URL url = null;
 				try {
-					in.close();
-					urlConnection.disconnect();
+					url = new URL("http://" + NoppaSyncAdapter.apiServer +
+							"/api/v1/courses.xml?key=" + NoppaSyncAdapter.apiKey +
+							"&search=" + Uri.encode(searchStr));
+				} catch (MalformedURLException e) {
+					Log.d("AddCourseDialogFragment", "MalformedURLException " + e.getMessage());
+					return;
+				}
+				
+				InputStream in = null;
+				HttpURLConnection urlConnection = null;
+				try {
+					urlConnection = (HttpURLConnection) url.openConnection();
+					in = new BufferedInputStream(urlConnection.getInputStream());
+				} catch (IOException e) {
+					Log.d("AddCourseDialogFragment", "IOException " + e.getMessage());
+					return;
+				}
+				
+				/*
+				 * Parse the XML response.
+				 */
+				String course_id = null, course_name = null;
+				try {
+					XmlPullParser parser = Xml.newPullParser();
+					parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+					parser.setInput(in, null);
+					parser.nextTag();
+					
+					parser.require(XmlPullParser.START_TAG, null, "courses");
+					while (parser.next() != XmlPullParser.END_DOCUMENT) {
+						int eventType = parser.getEventType();
+						String name = parser.getName();
+		
+						if (eventType == XmlPullParser.START_TAG) {
+							if (name.equals("course")) {
+								course_id = null;
+								course_name = null;
+							}
+							else if (name.equals("course_id")) {
+								course_id = NoppaSyncAdapter.extractXMLtagContent(parser, "course_id");
+							}
+							else if (name.equals("name")) {
+								course_name = NoppaSyncAdapter.extractXMLtagContent(parser, "name");
+							}
+						}
+						else if (eventType == XmlPullParser.END_TAG &&
+								name.equals("course") &&
+								course_id != null && course_name != null) {
+							courses.add(new Course(course_id, course_name));
+						}
+					}
+		    
+				} catch (XmlPullParserException e) {
+					Log.d("AddCourseDialogFragment", "XMLParserError " + e.getMessage());
 				} catch (IOException e) {
 					Log.d("AddCourseDialogFragment", "IOException  " + e.getMessage());
+				} finally {
+					try {
+						in.close();
+						urlConnection.disconnect();
+					} catch (IOException e) {
+						Log.d("AddCourseDialogFragment", "IOException  " + e.getMessage());
+					}
 				}
+				
+				Collections.sort(courses);
 			}
-			
-			Collections.sort(courses);
-			
-			progressBar.post(new Runnable() {
-				@Override
-				public void run() {
-					adapter.notifyDataSetChanged();
-			
-					progressBar.setVisibility(View.GONE);
-				}
-			});
+			finally {
+				progressBar.post(new Runnable() {
+					@Override
+					public void run() {
+						adapter.notifyDataSetChanged();
+				
+						progressBar.setVisibility(View.GONE);
+					}
+				});
+			}
 		}
 	}
 
@@ -197,13 +196,18 @@ public class AddCourseDialogFragment extends DialogFragment {
 					
 					@Override
 					public void onClick(View v) {
+						progressBar.setVisibility(View.VISIBLE);
+						
+						courses.clear();
+						adapter.notifyDataSetChanged();
+						
 						new Thread(new Searcher()).start();
 					}
 				});
 		
 		adapter = new ArrayAdapter<AddCourseDialogFragment.Course>(
 				view.getContext(),
-				android.R.layout.simple_list_item_multiple_choice,
+				R.layout.course_list_item,
 				courses );
 		courseListView.setAdapter(adapter);
 		courseListView.setOnItemClickListener(courseClickedHandler);

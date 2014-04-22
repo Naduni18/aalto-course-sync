@@ -17,13 +17,13 @@
         android:layout_height="wrap_content"
         android:text="@string/include_exercises" />
 
-        <CheckBox
+    <CheckBox
         android:id="@+id/assignmentsCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/include_assignments" />
 
-        <CheckBox
+    <CheckBox
         android:id="@+id/otherCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

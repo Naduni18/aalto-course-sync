@@ -7,7 +7,6 @@ import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 public class StubAuthenticator extends AbstractAccountAuthenticator {
 
@@ -19,12 +18,10 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 	public StubAuthenticator(Context context) {
 		super(context);
 		this.context = context;
-		Log.d("StubAuthenticator", "constructor");
 	}
 
 	@Override
 	public Bundle editProperties(AccountAuthenticatorResponse res, String accountType) {
-		Log.d("StubAuthenticator", "editProperties(...)");
 		throw new UnsupportedOperationException();
 	}
 
@@ -36,7 +33,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 			String[] requiredFeatures,
 			Bundle options) throws NetworkErrorException {
 		
-		Log.d("StubAuthenticator", "addAccount("+res+", "+accountType+", "+authTokenType+", "+requiredFeatures+", "+options+")");
 		Bundle b = new Bundle();
 		if (accountType.equals(ACCOUNT_TYPE)) {
 			b.putString(AccountManager.KEY_ACCOUNT_NAME, "no_account");
@@ -59,7 +55,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 			Account account,
 			Bundle options) throws NetworkErrorException {
 		
-		Log.d("StubAuthenticator", "confirmCredentials("+res+", "+account+", "+options+")");
 		return null;
 	}
 
@@ -70,8 +65,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 			String authTokenType,
 			Bundle options) throws NetworkErrorException {
 		
-		Log.d("StubAuthenticator", "getAuthToken(...)");
-//		throw new UnsupportedOperationException();
 		Bundle b = new Bundle();
 		b.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
 		b.putString(AccountManager.KEY_ACCOUNT_TYPE, ACCOUNT_TYPE);
@@ -81,7 +74,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 
 	@Override
 	public String getAuthTokenLabel(String s) {
-		Log.d("StubAuthenticator", "getAuthTokenLabel(" + s + ")");
 		throw new UnsupportedOperationException();
 	}
 
@@ -92,7 +84,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 			String authTokenType,
 			Bundle bundle) throws NetworkErrorException {
 		
-		Log.d("StubAuthenticator", "updateCredentials(...)");
 		throw new UnsupportedOperationException();
 	}
 
@@ -102,7 +93,6 @@ public class StubAuthenticator extends AbstractAccountAuthenticator {
 			Account account,
 			String[] features) throws NetworkErrorException {
 		
-		Log.d("StubAuthenticator", "hasFeatures(...)");
 		throw new UnsupportedOperationException();
 	}
 

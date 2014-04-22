@@ -49,14 +49,22 @@ public class AddCourseDialogFragment extends DialogFragment {
 			this.name = name;
 		}
 		
+		@Override
 		public String toString() {
 			return id + " - " + name;
 		}
 		
-		public boolean equals(Course other) {
-			return id.equalsIgnoreCase(other.id) && name.equals(other.name);
+		@Override
+		public boolean equals(Object other) {
+			try {
+				Course o = (Course) other;
+				return id.equalsIgnoreCase(o.id) && name.equals(o.name);
+			} catch (ClassCastException e) {
+				return false;
+			}
 		}
 		
+		@Override
 		public int compareTo(Course other) {
 			int diff = id.compareToIgnoreCase(other.id);
 			if (diff == 0)
@@ -113,7 +121,6 @@ public class AddCourseDialogFragment extends DialogFragment {
 				while (parser.next() != XmlPullParser.END_DOCUMENT) {
 					int eventType = parser.getEventType();
 					String name = parser.getName();
-					// Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
 	
 					if (eventType == XmlPullParser.START_TAG) {
 						if (name.equals("course")) {
@@ -169,7 +176,6 @@ public class AddCourseDialogFragment extends DialogFragment {
 	private OnItemClickListener courseClickedHandler = new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	        Course course = (Course) parent.getItemAtPosition(position);
-	        Log.d("AddCourseDialogFragment", "click: " + course.id + " " + v.getClass());
 	        CheckedTextView ctv = (CheckedTextView) v;
 	        ctv.toggle();
 	        course.checked = ctv.isChecked();
@@ -217,7 +223,6 @@ public class AddCourseDialogFragment extends DialogFragment {
 				for (Course course : courses) {
 					if (course.checked) {
 						courseSet.add(course.id);
-						Log.d("AddCourseDialogFragment", "selected: " + course.id);
 					}
 				}
 				

@@ -67,7 +67,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	public NoppaSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
-		Log.d("NoppaSyncAdapter", "constructor 1");
 		contentResolver = context.getContentResolver();
 	}
 
@@ -76,7 +75,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			boolean autoInitialize,
 			boolean allowParallelSyncs) {
 		super(context, autoInitialize, allowParallelSyncs);
-		Log.d("NoppaSyncAdapter", "constructor 2");
 		contentResolver = context.getContentResolver();
 	}
 
@@ -87,8 +85,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			String authority,
 			ContentProviderClient provider,
 			SyncResult result) {
-		
-		Log.d("NoppaSyncAdapter", "onPerformSync(...)");
 		
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
 		

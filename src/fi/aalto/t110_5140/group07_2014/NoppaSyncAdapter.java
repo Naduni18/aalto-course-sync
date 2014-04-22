@@ -42,6 +42,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 	ContentResolver contentResolver;
 	static final String apiServer = "noppa-api-dev.aalto.fi";
 	static final String apiKey = "<removed>";		// Testi avain
+	static final String noppaTimeZone = "Europe/Helsinki";
 	
 	/**
 	 * Map of course events in other events list to strings displayed to users.
@@ -264,8 +265,8 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		/*
 		 * Parse the XML response.
 		 */
-		// TODO: luetaanko kaikki oleelliset kentät kaikissa 4 eventtityypissä?
-		String title=null, type=null, description=null, location=null, start_time=null, end_time=null, start_date=null, end_date=null;
+		String title=null, type=null, content=null, location=null, group=null,
+				start_time=null, end_time=null, start_date=null, end_date=null;
 		try {
 			XmlPullParser parser = Xml.newPullParser();
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -296,12 +297,42 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 							start = df.parse(start_date + " " + start_time).getTime();
 							end = df.parse(end_date + " " + end_time).getTime();
 							
-							val.put(Events.TITLE, title + " - " + type);
+							StringBuilder calTitle = new StringBuilder(course + " - ");
+							StringBuilder calDesc = new StringBuilder();
+							if (content != null && ! content.isEmpty()) {
+								calDesc.append(content);
+							}
+							
+							// handle different event types
+							if (eventTag.equals("lecture")) {
+								calTitle.append(type);
+								
+								if (title != null && ! title.isEmpty()) {
+									if (calDesc.length() != 0) {
+										calDesc.insert(0, "\n");
+									}
+									calDesc.insert(0, title);
+								}
+							}
+							else if (eventTag.equals("exercise")) {
+								calTitle.append(type);
+								if (group != null && ! group.isEmpty())
+									calTitle.append(" (group " + group + ")");
+							}
+							else if (eventTag.equals("assignment") ||
+									eventTag.equals("event")) {
+								if (title != null && ! title.isEmpty()) {
+									calTitle.append(title + " - ");
+								}
+								calTitle.append(type);
+							}
+							
+							val.put(Events.TITLE, calTitle.toString());
 							val.put(Events.DTSTART, start);
 							val.put(Events.DTEND, end);
-							val.put(Events.DESCRIPTION, description);
+							val.put(Events.DESCRIPTION, calDesc.toString());
 							val.put(Events.EVENT_LOCATION, location);
-							val.put(Events.EVENT_TIMEZONE, Time.getCurrentTimezone());
+							val.put(Events.EVENT_TIMEZONE, noppaTimeZone);
 							val.put(Events.CALENDAR_ID, calendarId);
 							contentResolver.insert(
 									NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
@@ -310,7 +341,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 							// Log.d("NoppaSyncAdapter", "event: " + val.toString());
 						} catch (ParseException e) {
 							Log.d("NoppaSyncAdapter", "ParseException " + e.getMessage());
-							Log.d("NoppaSyncAdapter", title + " " + location + " " + description + " " + start_date + " " + start_time + " " + end_date + " " + end_time);
+							Log.d("NoppaSyncAdapter", title + " " + location + " " + content + " " + start_date + " " + start_time + " " + end_date + " " + end_time);
 						}
 					}
 				}
@@ -321,7 +352,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					
 					
 					if (name.equals(eventTag)) {
-						title = type = description = location =
+						title = type = content = location = group =
 								start_time = end_time = start_date = end_date = null;
 					}
 					else if (name.equals("title")) {
@@ -335,8 +366,11 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					else if (name.equals("location")) {
 						location = extractXMLtagContent(parser, "location");
 					}
-					else if (name.equals("description")) {
-						description = extractXMLtagContent(parser, "description");
+					else if (name.equals("content")) {
+						content = extractXMLtagContent(parser, "content");
+					}
+					else if (name.equals("additional_info")) {
+						content = extractXMLtagContent(parser, "additional_info");
 					}
 					else if (name.equals("start_date")) {
 						start_date = extractXMLtagContent(parser, "start_date");

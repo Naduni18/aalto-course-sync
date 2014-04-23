@@ -33,7 +33,6 @@ import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
-import android.text.format.Time;
 import android.util.Log;
 import android.util.Xml;
 
@@ -96,20 +95,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		boolean show_assignments = pref.getBoolean("include_assignments", true);
 		boolean show_other       = pref.getBoolean("include_other", true);
 		
-		// TODO: nämä konffattaviksi myös?
-//		boolean show_event_course = false;
-//		boolean show_exams = true;
-//		boolean show_mid_term_exams = true;
-//		boolean show_other = true;
-//		boolean show_seminar = true;
-//		boolean show_casework = true;
-//		boolean show_demonstration = true;
-//		boolean show_group_studies = true;
-//		boolean show_individual_studies = true;
-//		boolean show_hybrid_studies = true;
-//		boolean show_online_studies = true;
-//		boolean show_unknown = false;
-		
 		String calendarName = "coursecalendar";
 		String calendarDisplayName = "Course calendar";
 		
@@ -126,17 +111,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 				Calendars.NAME + "=?",
 				new String[]{ calendarName },
 				null);
-		// uncomment to delete events:
-//		while (c.moveToNext()) {
-//			Log.i("NoppaSyncAdapter",
-//					"" +
-//					contentResolver.delete(
-//							Events.CONTENT_URI,
-//							Events.CALENDAR_ID + "=?",
-//							new String[]{ String.valueOf(c.getLong(0)) }) +
-//					" events deleted");
-//			return;
-//		}
 		if (c != null && c.moveToNext()) {
 			calendarId = c.getLong(0);
 			calendarUri = ContentUris.withAppendedId(Calendars.CONTENT_URI, calendarId);
@@ -184,15 +158,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			if (show_other)
 				fetchEvents(course, account, calendarId, "event", otherTypeMap);
 		}
-		
-			// uncomment to delete calendars created by this program:
-/*			Log.i("NoppaSyncAdapter",
-					"" +
-					contentResolver.delete(
-							Calendars.CONTENT_URI,
-							Calendars.NAME + "=?", new String[]{ calendarName }) +
-					" calendars deleted");
-*/	
 	}
 	
 	private static Uri asSyncAdapter(Uri uri, Account account) {
@@ -272,7 +237,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 			parser.setInput(in, null);
 			parser.nextTag();
-			// Log.d("NoppaSyncAdapter", parser.getName());
 			
 			parser.require(XmlPullParser.START_TAG, null, objName);
 			while (parser.next() != XmlPullParser.END_DOCUMENT) {
@@ -349,7 +313,6 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					
 					String name = parser.getName();
 					// Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
-					
 					
 					if (name.equals(eventTag)) {
 						title = type = content = location = group =

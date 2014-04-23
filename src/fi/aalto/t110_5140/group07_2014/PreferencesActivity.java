@@ -44,6 +44,8 @@ public class PreferencesActivity extends Activity {
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		setContentView(R.layout.preferences);
 		
+		// set checkbox values from preferences
+		
 		CheckBox lectures = (CheckBox) findViewById(R.id.lecturesCheckBox);
 		lectures.setChecked(pref.getBoolean("include_lectures", true));
 		lectures.setOnCheckedChangeListener(new CheckBoxListener("include_lectures"));
@@ -93,6 +95,7 @@ public class PreferencesActivity extends Activity {
 		updateCourseList();
 	}
 	
+	/** Read set of courses from preferences and update course list */
 	void updateCourseList() {
 		LinearLayout courseListLayout = (LinearLayout) findViewById(R.id.courseList);
 		courseListLayout.removeAllViews();

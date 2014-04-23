@@ -370,7 +370,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 						content = extractXMLtagContent(parser, "content");
 					}
 					else if (name.equals("additional_info")) {
-						content = extractXMLtagContent(parser, "additional_info");
+						content += "\n" + extractXMLtagContent(parser, "additional_info");
 					}
 					else if (name.equals("start_date")) {
 						start_date = extractXMLtagContent(parser, "start_date");

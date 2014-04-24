@@ -1,4 +1,4 @@
-package fi.aalto.t110_5140.group07_2014;
+package fi.aalto.ekman_lehtomaki.aaltocoursesync;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.Set;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import fi.aalto.t110_5140.group07_2014.noppacalendarsync.R;
+import fi.aalto.ekman_lehtomaki.aaltocoursesync.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;

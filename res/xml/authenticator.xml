@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="fi.aalto.t110_5140.group07_2014.noppacalendarsync.no_account"
+    android:accountType="fi.aalto.ekman_lehtomaki.aaltocoursesync.no_account"
     android:icon="@drawable/ic_launcher"
     android:smallIcon="@drawable/ic_launcher"
     android:label="@string/app_name" />

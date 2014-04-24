@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fi.aalto.t110_5140.group07_2014.noppacalendarsync"
+    package="fi.aalto.ekman_lehtomaki.aaltocoursesync"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -19,13 +19,13 @@
         android:theme="@style/AppTheme" >
 
         <provider
-            android:name="fi.aalto.t110_5140.group07_2014.NoppaContentProvider"
-            android:authorities="fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider"
+            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.NoppaContentProvider"
+            android:authorities="fi.aalto.ekman_lehtomaki.aaltocoursesync.provider"
             android:exported="true"
             android:syncable="true" />
 
         <service
-            android:name="fi.aalto.t110_5140.group07_2014.NoppaSyncService"
+            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.NoppaSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
@@ -34,7 +34,7 @@
         </service>
 
         <service
-            android:name="fi.aalto.t110_5140.group07_2014.StubAuthenticatorService"
+            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.StubAuthenticatorService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
@@ -44,7 +44,7 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <activity android:name="fi.aalto.t110_5140.group07_2014.PreferencesActivity">
+        <activity android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.PreferencesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

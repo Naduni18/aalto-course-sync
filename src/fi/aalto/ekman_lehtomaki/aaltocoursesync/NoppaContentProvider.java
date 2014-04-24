@@ -1,4 +1,4 @@
-package fi.aalto.t110_5140.group07_2014;
+package fi.aalto.ekman_lehtomaki.aaltocoursesync;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -8,7 +8,7 @@ import android.net.Uri;
 public class NoppaContentProvider extends ContentProvider {
 
 	private static final String AUTHORITY =
-			"fi.aalto.t110_5140.group07_2014.noppacalendarsync.provider";
+			"fi.aalto.ekman_lehtomaki.aaltocoursesync.provider";
 	public static final Uri URI = Uri.parse("content://" + AUTHORITY + "/");
 
 	@Override

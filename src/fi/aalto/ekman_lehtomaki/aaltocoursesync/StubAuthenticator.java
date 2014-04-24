@@ -1,4 +1,4 @@
-package fi.aalto.t110_5140.group07_2014;
+package fi.aalto.ekman_lehtomaki.aaltocoursesync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -11,7 +11,7 @@ import android.os.Bundle;
 public class StubAuthenticator extends AbstractAccountAuthenticator {
 
 	private static final String ACCOUNT_TYPE =
-			"fi.aalto.t110_5140.group07_2014.noppacalendarsync.no_account";
+			"fi.aalto.ekman_lehtomaki.aaltocoursesync.no_account";
 
 	private final Context context;
 

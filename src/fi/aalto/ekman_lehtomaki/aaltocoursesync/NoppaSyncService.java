@@ -1,4 +1,4 @@
-package fi.aalto.t110_5140.group07_2014;
+package fi.aalto.ekman_lehtomaki.aaltocoursesync;
 
 import android.app.Service;
 import android.content.Intent;

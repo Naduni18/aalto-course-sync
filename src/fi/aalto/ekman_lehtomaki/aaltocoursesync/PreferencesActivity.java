@@ -1,10 +1,10 @@
-package fi.aalto.t110_5140.group07_2014;
+package fi.aalto.ekman_lehtomaki.aaltocoursesync;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fi.aalto.t110_5140.group07_2014.noppacalendarsync.R;
+import fi.aalto.ekman_lehtomaki.aaltocoursesync.R;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;

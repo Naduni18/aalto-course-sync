@@ -4,10 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class NoppaSyncService extends Service {
+public class AaltoSyncService extends Service {
 
 	/** Storage for an instance of the sync adapter */
-	private static NoppaSyncAdapter sSyncAdapter = null;
+	private static AaltoSyncAdapter sSyncAdapter = null;
 
 	/** Object to use as a thread-safe lock */
 	private static final Object sSyncAdapterLock = new Object();
@@ -19,7 +19,7 @@ public class NoppaSyncService extends Service {
 		// Disallow parallel syncs
 		synchronized (sSyncAdapterLock) {
 			if (sSyncAdapter == null) {
-				sSyncAdapter = new NoppaSyncAdapter(getApplicationContext(), true);
+				sSyncAdapter = new AaltoSyncAdapter(getApplicationContext(), true);
 			}
 		}
 	}

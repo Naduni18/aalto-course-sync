@@ -19,13 +19,13 @@
         android:theme="@style/AppTheme" >
 
         <provider
-            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.NoppaContentProvider"
+            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.AaltoContentProvider"
             android:authorities="fi.aalto.ekman_lehtomaki.aaltocoursesync.provider"
             android:exported="true"
             android:syncable="true" />
 
         <service
-            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.NoppaSyncService"
+            android:name="fi.aalto.ekman_lehtomaki.aaltocoursesync.AaltoSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>

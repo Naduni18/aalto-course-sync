@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class NoppaContentProvider extends ContentProvider {
+public class AaltoContentProvider extends ContentProvider {
 
 	private static final String AUTHORITY =
 			"fi.aalto.ekman_lehtomaki.aaltocoursesync.provider";

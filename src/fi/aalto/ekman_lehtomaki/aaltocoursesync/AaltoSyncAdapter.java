@@ -38,7 +38,7 @@ import android.provider.CalendarContract.Events;
 import android.util.Log;
 import android.util.Xml;
 
-public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
+public class AaltoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	ContentResolver contentResolver;
 	
@@ -64,12 +64,12 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 
-	public NoppaSyncAdapter(Context context, boolean autoInitialize) {
+	public AaltoSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
 		contentResolver = context.getContentResolver();
 	}
 
-	public NoppaSyncAdapter(
+	public AaltoSyncAdapter(
 			Context context,
 			boolean autoInitialize,
 			boolean allowParallelSyncs) {
@@ -113,7 +113,7 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		if (c != null && c.moveToNext()) {
 			calendarId = c.getLong(0);
 			calendarUri = ContentUris.withAppendedId(Calendars.CONTENT_URI, calendarId);
-			// Log.d("NoppaSyncAdapter", "content URI = " + calendarUri);
+			// Log.d("AaltoSyncAdapter", "content URI = " + calendarUri);
 		}
 		else {
 			// add calendar if not present
@@ -127,14 +127,14 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			val.put(Calendars.OWNER_ACCOUNT, account.name);
 			val.put(Calendars.SYNC_EVENTS, true);
 			calendarUri = contentResolver.insert(
-					NoppaSyncAdapter.asSyncAdapter(Calendars.CONTENT_URI, account),
+					AaltoSyncAdapter.asSyncAdapter(Calendars.CONTENT_URI, account),
 					val);
 			calendarId = ContentUris.parseId(calendarUri);
 		}
-		calendarUri = NoppaSyncAdapter.asSyncAdapter(calendarUri, account);
+		calendarUri = AaltoSyncAdapter.asSyncAdapter(calendarUri, account);
 		
 		// delete old events
-		Log.i("NoppaSyncAdapter",
+		Log.i("AaltoSyncAdapter",
 				"" +
 				contentResolver.delete(
 						Events.CONTENT_URI,
@@ -212,18 +212,18 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 					"/api/v1/courses/" + course + "/" + objName + ".xml?key=" +
 					getContext().getString(R.string.noppa_api_key));
 		} catch (MalformedURLException e) {
-			Log.d("NoppaSyncAdapter", "MalformedURLException " + e.getMessage());
+			Log.d("AaltoSyncAdapter", "MalformedURLException " + e.getMessage());
 			return;
 		}
 
 		HttpURLConnection urlConnection = null;
 		try {
-			Log.d("NoppaSyncAdapter", "HTTP Get API request, url: " + url.toString());
+			Log.d("AaltoSyncAdapter", "HTTP Get API request, url: " + url.toString());
 			urlConnection = (HttpURLConnection) url.openConnection();
 			in = new BufferedInputStream(urlConnection.getInputStream());
 			
 		} catch (IOException e) {
-			Log.d("NoppaSyncAdapter", "IOException " + e.getMessage());
+			Log.d("AaltoSyncAdapter", "IOException " + e.getMessage());
 			return;
 		}
 		
@@ -300,20 +300,20 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 									getContext().getString(R.string.noppa_timezone));
 							val.put(Events.CALENDAR_ID, calendarId);
 							contentResolver.insert(
-									NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
+									AaltoSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
 									val);
 							
-							// Log.d("NoppaSyncAdapter", "event: " + val.toString());
+							// Log.d("AaltoSyncAdapter", "event: " + val.toString());
 						} catch (ParseException e) {
-							Log.d("NoppaSyncAdapter", "ParseException " + e.getMessage());
-							Log.d("NoppaSyncAdapter", title + " " + location + " " + content + " " + start_date + " " + start_time + " " + end_date + " " + end_time);
+							Log.d("AaltoSyncAdapter", "ParseException " + e.getMessage());
+							Log.d("AaltoSyncAdapter", title + " " + location + " " + content + " " + start_date + " " + start_time + " " + end_date + " " + end_time);
 						}
 					}
 				}
 				else if (parser.getEventType() == XmlPullParser.START_TAG) {
 					
 					String name = parser.getName();
-					// Log.d("NoppaSyncAdapter", "<" + parser.getName() + ">");
+					// Log.d("AaltoSyncAdapter", "<" + parser.getName() + ">");
 					
 					if (name.equals(eventTag)) {
 						title = type = content = location = group =
@@ -363,15 +363,15 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 	
 		} catch (XmlPullParserException e) {
-			Log.d("NoppaSyncAdapter", "XMLParserError " + e.getMessage());
+			Log.d("AaltoSyncAdapter", "XMLParserError " + e.getMessage());
 		} catch (IOException e) {
-			Log.d("NoppaSyncAdapter", "IOException  " + e.getMessage());
+			Log.d("AaltoSyncAdapter", "IOException  " + e.getMessage());
 		} finally {
 			try {
 				in.close();
 				urlConnection.disconnect();
 			} catch (IOException e) {
-				Log.d("NoppaSyncAdapter", "IOException  " + e.getMessage());
+				Log.d("AaltoSyncAdapter", "IOException  " + e.getMessage());
 			}
 		}
 	}

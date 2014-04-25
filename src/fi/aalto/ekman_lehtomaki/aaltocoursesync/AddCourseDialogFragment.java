@@ -125,10 +125,10 @@ public class AddCourseDialogFragment extends DialogFragment {
 								course_name = null;
 							}
 							else if (name.equals("course_id")) {
-								course_id = NoppaSyncAdapter.extractXMLtagContent(parser, "course_id");
+								course_id = AaltoSyncAdapter.extractXMLtagContent(parser, "course_id");
 							}
 							else if (name.equals("name")) {
-								course_name = NoppaSyncAdapter.extractXMLtagContent(parser, "name");
+								course_name = AaltoSyncAdapter.extractXMLtagContent(parser, "name");
 							}
 						}
 						else if (eventType == XmlPullParser.END_TAG &&

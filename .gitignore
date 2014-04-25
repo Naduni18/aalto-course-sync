@@ -44,3 +44,7 @@ local.properties
 .buildpath
 
 libs/android-support-*.jar
+
+# contains private data
+/res/values/noppa_config.xml
+

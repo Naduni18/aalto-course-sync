@@ -86,8 +86,8 @@ public class AddCourseDialogFragment extends DialogFragment {
 			try {
 				URL url = null;
 				try {
-					url = new URL("http://" + NoppaSyncAdapter.apiServer +
-							"/api/v1/courses.xml?key=" + NoppaSyncAdapter.apiKey +
+					url = new URL("http://" + getString(R.string.noppa_api_server) +
+							"/api/v1/courses.xml?key=" + getString(R.string.noppa_api_key) +
 							"&search=" + Uri.encode(searchStr));
 				} catch (MalformedURLException e) {
 					Log.d("AddCourseDialogFragment", "MalformedURLException " + e.getMessage());

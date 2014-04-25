@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copy this file to res/xml/noppa_config.xml and change the API key.
+-->
+<resources>
+    <string name="noppa_api_server">noppa-api-dev.aalto.fi</string>
+    <string name="noppa_api_key">api_key_here</string>
+
+    <string name="noppa_timezone">Europe/Helsinki</string>
+</resources>

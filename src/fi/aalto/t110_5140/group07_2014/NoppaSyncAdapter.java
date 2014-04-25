@@ -17,6 +17,8 @@ import java.util.Set;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import fi.aalto.t110_5140.group07_2014.noppacalendarsync.R;
+
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
@@ -39,9 +41,6 @@ import android.util.Xml;
 public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	ContentResolver contentResolver;
-	static final String apiServer = "noppa-api-dev.aalto.fi";
-	static final String apiKey = "<removed>";		// Testi avain
-	static final String noppaTimeZone = "Europe/Helsinki";
 	
 	/**
 	 * Map of course events in other events list to strings displayed to users.
@@ -209,8 +208,9 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 		URL url = null;
 		InputStream in = null;
 		try {
-			url = new URL("http://" + apiServer + "/api/v1/courses/" + course +
-					"/" + objName + ".xml?key=" + apiKey);
+			url = new URL("http://" + getContext().getString(R.string.noppa_api_server) +
+					"/api/v1/courses/" + course + "/" + objName + ".xml?key=" +
+					getContext().getString(R.string.noppa_api_key));
 		} catch (MalformedURLException e) {
 			Log.d("NoppaSyncAdapter", "MalformedURLException " + e.getMessage());
 			return;
@@ -296,7 +296,8 @@ public class NoppaSyncAdapter extends AbstractThreadedSyncAdapter {
 							val.put(Events.DTEND, end);
 							val.put(Events.DESCRIPTION, calDesc.toString());
 							val.put(Events.EVENT_LOCATION, location);
-							val.put(Events.EVENT_TIMEZONE, noppaTimeZone);
+							val.put(Events.EVENT_TIMEZONE, 
+									getContext().getString(R.string.noppa_timezone));
 							val.put(Events.CALENDAR_ID, calendarId);
 							contentResolver.insert(
 									NoppaSyncAdapter.asSyncAdapter(Events.CONTENT_URI , account),
